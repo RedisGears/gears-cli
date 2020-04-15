@@ -1,5 +1,5 @@
 # GearsCli
-Simple cli that allows the send python code the RedisGears
+Simple cli that allows the send python code to RedisGears
 
 ## Install
 ```python
@@ -8,6 +8,7 @@ pip install git+https://github.com/RedisGears/GearsCli.git
 
 ## Usage
 ```
+> gears-cli --help
 usage: gears-cli [-h] [--host HOST] [--port PORT]
                  [--requirements REQUIREMENTS] [--password PASSWORD]
                  path [extra_args [extra_args ...]]
