@@ -39,39 +39,39 @@ def PP(res, resId):
     print('%d)\t%s' % (resId, res))
 
 def main():
-	try:
-	    r = redis.Redis(args.host, args.port, password=args.password, decode_responses=True)
-	    r.ping()
-	except:
-	    print('Cannot connect to Redis. Aborting.')
-	    exit(1)
+    try:
+        r = redis.Redis(args.host, args.port, password=args.password, decode_responses=True)
+        r.ping()
+    except:
+        print('Cannot connect to Redis. Aborting.')
+        exit(1)
 
-	if args.requirements is not None:
-	    args.extra_args.append('REQUIREMENTS')
-	    with open(args.requirements, 'r') as f:
-	        requirements = [(el.strip()) for el in f.readlines()] 
-	        args.extra_args += requirements
+    if args.requirements is not None:
+        args.extra_args.append('REQUIREMENTS')
+        with open(args.requirements, 'r') as f:
+            requirements = [(el.strip()) for el in f.readlines()] 
+            args.extra_args += requirements
 
-	with open(args.path, 'rt') as f:
-		script = f.read()
-	q = ['rg.pyexecute', script] + args.extra_args
+    with open(args.path, 'rt') as f:
+        script = f.read()
+    q = ['rg.pyexecute', script] + args.extra_args
 
-	reply = r.execute_command(*q)
-	
-	if reply == 'OK':
-	    print('OK')
-	else:
-	    results, errors = reply
-	    print('Results')
-	    print('-------')
-	    for i in range(len(results)):
-	    	PP(results[i], i + 1)
-	    print('')
-	    if len(errors) > 0:
-		    print('Errors')
-		    print('------')
-		    for i in range(len(errors)):
-		        print('%d)\t%s', (i + 1, str(errors[i])))
+    reply = r.execute_command(*q)
+    
+    if reply == 'OK':
+        print('OK')
+    else:
+        results, errors = reply
+        print('Results')
+        print('-------')
+        for i in range(len(results)):
+            PP(results[i], i + 1)
+        print('')
+        if len(errors) > 0:
+            print('Errors')
+            print('------')
+            for i in range(len(errors)):
+                print('%d)\t%s', (i + 1, str(errors[i])))
 
 
 if __name__ == '__main__':
