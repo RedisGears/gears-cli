@@ -26,17 +26,17 @@ parser.add_argument(
 
 args = parser.parse_args()
 
-def PP(res, resId):
+def print_res(res, res_id):
     res = str(res)
     try:
         res = json.loads(res)
-        print('%d) json:' % resId)
+        print('%d) json:' % res_id)
         print(json.dumps(res, indent=4, sort_keys=True))
         print('')
         return
     except Exception as e:
         pass
-    print('%d)\t%s' % (resId, res))
+    print('%d)\t%s' % (res_id, res))
 
 def main():
     try:
@@ -65,7 +65,7 @@ def main():
         print('Results')
         print('-------')
         for i in range(len(results)):
-            PP(results[i], i + 1)
+            print_res(results[i], i + 1)
         print('')
         if len(errors) > 0:
             print('Errors')
