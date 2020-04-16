@@ -5,6 +5,8 @@ def read_all(f):
     with io.open(f, encoding="utf-8") as I:
         return I.read()
     
+requirements = list(map(str.strip, open("requirements.txt").readlines()))
+    
 setup(
     name='gears-cli',
     version='0.1.0',
@@ -13,9 +15,7 @@ setup(
     long_description_content_type='text/markdown',
     url='https://github.com/RedisGears/gears-cli',
     packages=find_packages(),
-    install_requires=[
-        'redis'
-    ],
+    install_requires=requirements,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
