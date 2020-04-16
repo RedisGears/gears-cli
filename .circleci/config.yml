@@ -12,8 +12,11 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
-          command: ./manage.py test
-          name: Test
+          name: Build sdist
+          command: python setup.py sdist  
+#      - run:
+#          command: ./manage.py test
+#          name: Test
 
 workflows:
   main:
