@@ -27,7 +27,7 @@ parser.add_argument(
 args = parser.parse_args()
 
 def PP(res, resId):
-	res = str(res)
+    res = str(res)
     try:
         res = json.loads(res)
         print('%d) json:' % resId)
