@@ -1,9 +1,9 @@
-# GearsCli
+# gears-cli
 Simple cli that allows the send python code to RedisGears
 
 ## Install
 ```python
-pip install git+https://github.com/RedisGears/GearsCli.git
+pip install git+https://github.com/RedisGears/gears-cli.git
 ```
 
 ## Usage
