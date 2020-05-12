@@ -9,7 +9,7 @@ requirements = list(map(str.strip, open("requirements.txt").readlines()))
     
 setup(
     name='gears-cli',
-    version='0.1.0',
+    version='1.0.0',
     description='RedisGears cli',
     long_description=read_all("README.md"),
     long_description_content_type='text/markdown',
