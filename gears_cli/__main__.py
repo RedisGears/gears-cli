@@ -115,7 +115,7 @@ def run(host, port, password, requirements, filepath, extra_args):
 @click.option('--password', default=None, help='Redis password')
 @click.option('--save-directory', default='./', help='Directory for exported files')
 @click.argument('requirement')
-def export_requirement(host, port, password, save_direcotry, requirement):
+def export_requirement(host, port, password, save_directory, requirement):
     r = create_connection(host, port, password, decode_responses=False);
     
     try:
@@ -138,7 +138,7 @@ def export_requirement(host, port, password, save_direcotry, requirement):
     jsonMetaDataStr = json.dumps(metaData, indent=4, sort_keys=True)
 
     fileName = "%s-v%s-gears-req-%s.zip" % (os.path.basename(metaData['Name']), metaData['GearReqVersion'], metaData['CompiledOs'])
-    filePath = os.path.join(save_direcotry, fileName)
+    filePath = os.path.join(save_directory, fileName)
     filePath = os.path.abspath(filePath)
 
     if os.path.exists(filePath):
