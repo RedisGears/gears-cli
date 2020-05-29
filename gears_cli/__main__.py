@@ -113,7 +113,7 @@ def run(host, port, password, requirements, filepath, extra_args):
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--password', default=None, help='Redis password')
-@click.option('--save-direcotry', default='./', help='Redis password')
+@click.option('--save-directory', default='./', help='Directory for exported files')
 @click.argument('requirement')
 def export_requirement(host, port, password, save_direcotry, requirement):
     r = create_connection(host, port, password, decode_responses=False);
@@ -156,7 +156,7 @@ def export_requirement(host, port, password, save_direcotry, requirement):
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--password', default=None, help='Redis password')
-@click.option('--requirement-file-path', help='Redis password')
+@click.option('--requirement-file-path', help='Path of requirements file')
 @click.option('--bulk-size', default=10, type=int, help='Max bulk size to send to redis in MB')
 def import_requirement(host, port, password, requirement_file_path, bulk_size):
     r = create_connection(host, port, password, decode_responses=False);
