@@ -3,6 +3,7 @@ import click
 import json
 import os
 import zipfile
+import io
 
 DATA_BIN_FINE_NAME = 'Data.bin'
 META_DATA_FILE_NAME = 'MetaData.json'
@@ -67,7 +68,29 @@ def print_res(res, res_id):
         pass
     print('%s\t%s' % (res_id, Colors.Bold(res)))
 
-@gears_cli.command()
+@gears_cli.command(help='Install give requirements')
+@click.option('--host', default='localhost', help='Redis host to connect to')
+@click.option('--port', default=6379, type=int, help='Redis port to connect to')
+@click.option('--password', default=None, help='Redis password')
+@click.option('--requirements-file', default=None, help='Path to requirements.txt file')
+@click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
+def install_requirements(host, port, password, requirements_file, requirements):
+    r = create_connection(host, port, password);
+
+    requirements = [a for a in requirements]
+
+    if requirements_file is not None:
+        with open(requirements, 'r') as f:
+            reqs = [(el.strip()) for el in f.readlines()] 
+            requirements += reqs
+
+    try:
+        reply = r.execute_command('RG.PYEXECUTE', 'log("installing requirements")', 'REQUIREMENTS', *requirements)
+    except Exception as e:
+        print(Colors.Bred("failed running gear function (%s)" % str(e)))
+        exit(1)
+
+@gears_cli.command(help='Run gears function')
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--password', default=None, help='Redis password')
@@ -109,35 +132,35 @@ def run(host, port, password, requirements, filepath, extra_args):
             for i in range(len(errors)):
                 print(Colors.Bred('%d)\t%s' % (i + 1, str(errors[i]))))
 
-@gears_cli.command()
-@click.option('--host', default='localhost', help='Redis host to connect to')
-@click.option('--port', default=6379, type=int, help='Redis port to connect to')
-@click.option('--password', default=None, help='Redis password')
-@click.option('--save-directory', default='./', help='Directory for exported files')
-@click.argument('requirement')
-def export_requirement(host, port, password, save_directory, requirement):
-    r = create_connection(host, port, password, decode_responses=False);
-    
-    try:
-        metaDataValues, setializedData = r.execute_command('RG.PYEXPORTREQ', requirement)
-    except Exception as e:
-        print(Colors.Bred("failed exporting requirement (%s)" % str(e)))
-        exit(1)
-
-    metaData = {}
-    for i in range(0, len(metaDataValues), 2):
-        key = metaDataValues[i]
-        value = metaDataValues[i + 1]
+def extract_metadata(meta_data_reply):
+    meta_data = {}
+    for i in range(0, len(meta_data_reply), 2):
+        key = meta_data_reply[i]
+        value = meta_data_reply[i + 1]
         if isinstance(key, bytes):
             key = key.decode('utf-8')
         if isinstance(value, bytes):
             value = value.decode('utf-8')
         if isinstance(value, list):
             value = [str(a.decode('utf-8')) for a in value]
-        metaData[key] = value
+        meta_data[key] = value
+    return meta_data
+
+
+def export_single_req(r, req_name, save_directory, output_prefix):
+    try:
+        metaDataValues, setializedData = r.execute_command('RG.PYEXPORTREQ', req_name)
+    except Exception as e:
+        print(Colors.Bred("failed exporting requirement (%s)" % str(e)))
+        exit(1)
+
+    metaData = extract_metadata(metaDataValues)
     jsonMetaDataStr = json.dumps(metaData, indent=4, sort_keys=True)
 
-    fileName = "%s-v%s-gears-req-%s.zip" % (os.path.basename(metaData['Name']), metaData['GearReqVersion'], metaData['CompiledOs'])
+    if output_prefix is None:
+        fileName = "redisgears-requirement-v%s-%s-%s.zip" % (metaData['GearReqVersion'], os.path.basename(metaData['Name']), metaData['CompiledOs'])
+    else:
+        fileName = "%s-%s.zip" % (output_prefix, metaData['CompiledOs'])
     filePath = os.path.join(save_directory, fileName)
     filePath = os.path.abspath(filePath)
 
@@ -152,24 +175,50 @@ def export_requirement(host, port, password, save_directory, requirement):
         data = b''.join(setializedData)
         zf.writestr(DATA_BIN_FINE_NAME, data)
 
-@gears_cli.command()
+@gears_cli.command(help='Export requirements from RedisGears')
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--password', default=None, help='Redis password')
-@click.option('--requirement-file-path', help='Path of requirements file')
-@click.option('--bulk-size', default=10, type=int, help='Max bulk size to send to redis in MB')
-def import_requirement(host, port, password, requirement_file_path, bulk_size):
+@click.option('--save-directory', default='./', help='Directory for exported files')
+@click.option('--output-prefix', default=None, help='Prefix for the requirement zip file')
+@click.option('--registration-id', multiple=True, default=[], help='Regisrations ids to extract their requirements')
+@click.option('--requirement', multiple=True, default=[], help='Requirement to export')
+@click.option('--all', is_flag=True, default=False, help='Export all requirements')
+def export_requirements(host, port, password, save_directory, output_prefix, registration_id, all, requirement):
     r = create_connection(host, port, password, decode_responses=False);
 
-    bulk_size_in_bytes = bulk_size * 1024 * 1024
+    if all:
+        all_reqs = r.execute_command('RG.PYDUMPREQS')
+        if len(all_reqs) == 0:
+            print(Colors.Bred("No requirements to export"))
+            exit(1)
+        for req in all_reqs:
+            md = extract_metadata(req)
+            export_single_req(r, md['Name'], save_directory, output_prefix)
+        return
 
-    requirement_file_path = os.path.abspath(requirement_file_path)
+    requirements_to_export = set()
 
-    if not os.path.exists(requirement_file_path):
-        print(Colors.Bred("File %s does not exists" % requirement_file_path))
-        exit(1)
+    if len(registration_id) > 0:
+        registrations = r.execute_command('RG.DUMPREGISTRATIONS')
+        for registration_id in registration_id:
+            registration = [r for r in registrations if r[1].decode('utf-8') == registration_id]
+            if len(registration) != 1:
+                print(Colors.Bred("No such registration %s" % registration_id))
+                exit(1)
+            registration = registration[0]
+            session = registration[9]
+            session = eval(session.decode('utf-8'))
+            [requirements_to_export.add(n['name']) for n in session['depsList']]
 
-    with zipfile.ZipFile(requirement_file_path, "a", zipfile.ZIP_DEFLATED, False) as zf:
+    for req in requirement:
+        requirements_to_export.add(req)
+
+    for req in requirements_to_export:
+        export_single_req(r, req, save_directory, output_prefix)
+
+def import_single_req(r, req_io, bulk_size_in_bytes):
+    with zipfile.ZipFile(req_io, "r", zipfile.ZIP_DEFLATED, False) as zf:
         try:
             data = zf.read(DATA_BIN_FINE_NAME)
         except Exception as e:
@@ -182,7 +231,45 @@ def import_requirement(host, port, password, requirement_file_path, bulk_size):
             print(Colors.Bred("failed import requirement (%s)" % str(e)))
             exit(1)
 
-        print(Colors.Green('Requirement imported successfully'))
+    
+@gears_cli.command(help='Import requirements to RedisGears')
+@click.option('--host', default='localhost', help='Redis host to connect to')
+@click.option('--port', default=6379, type=int, help='Redis port to connect to')
+@click.option('--password', default=None, help='Redis password')
+@click.option('--requirements-path', default='./', help='Path of requirements directory containing requirements zip files, could also be a zip file contains more requirements zip files')
+@click.option('--bulk-size', default=10, type=int, help='Max bulk size to send to redis in MB')
+@click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
+def import_requirements(host, port, password, requirements_path, bulk_size, requirements):
+    r = create_connection(host, port, password, decode_responses=False);
+
+    bulk_size_in_bytes = bulk_size * 1024 * 1024
+
+    requirements_path = os.path.abspath(requirements_path)
+
+    if not os.path.exists(requirements_path):
+        print(Colors.Bred("File %s does not exists" % requirements_path))
+        exit(1)
+
+    if requirements_path.endswith('.zip'):
+        with zipfile.ZipFile(requirements_path, "r", zipfile.ZIP_DEFLATED, False) as zf:
+            for req in requirements:
+                try:
+                    req_data = zf.read(req)
+                except Exception as e:
+                    print(Colors.Bred("Requirement %s could not be found in zip, error='%s'" % (req, str(e))))
+                    exit(1)
+                io_buffer = io.BytesIO(req_data)
+                import_single_req(r, io_buffer, bulk_size_in_bytes)
+                print(Colors.Green('Requirement %s imported successfully' % req))
+        return
+
+    for req in requirements:
+        req_path = os.path.join(requirements_path, req)
+        if not os.path.exists(req_path):
+            print(Colors.Bred("File %s does not exists" % req_path))
+            exit(1)
+        import_single_req(r, req_path, bulk_size_in_bytes)
+        print(Colors.Green('Requirement %s imported successfully' % req_path))
 
 if __name__ == '__main__':
     gears_cli()

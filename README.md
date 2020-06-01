@@ -20,22 +20,71 @@ pip install git+https://github.com/RedisGears/gears-cli.git
 
 ## Usage
 ```
-> gears-cli --help
-usage: gears-cli [-h] [--host HOST] [--port PORT]
-                 [--requirements REQUIREMENTS] [--password PASSWORD]
-                 path [extra_args [extra_args ...]]
+Usage: __main__.py [OPTIONS] COMMAND [ARGS]...
 
-Run gears scripts on Redis(Gears)
+Options:
+  --help  Show this message and exit.
 
-positional arguments:
-  path                  scripts paths
-  extra_args            extra argument to send with the script (default: [])
+Commands:
+  export-requirements   Export requirements from RedisGears
+  import-requirements   Import requirements to RedisGears
+  install-requirements  Install give requirements
+  run                   Run gears function
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --host HOST           redis host (default: localhost)
-  --port PORT           redis port (default: 6379)
-  --requirements REQUIREMENTS
-                        requirements file (default: None)
-  --password PASSWORD   redis password (default: None)
+
+> gears-cli run --help
+Usage: __main__.py run [OPTIONS] FILEPATH [EXTRA_ARGS]...
+
+  Run gears function
+
+Options:
+  --host TEXT          Redis host to connect to
+  --port INTEGER       Redis port to connect to
+  --password TEXT      Redis password
+  --requirements TEXT  Path to requirements.txt file
+  --help               Show this message and exit.
+
+> gears-cli export-requirements --help
+Usage: __main__.py export-requirements [OPTIONS]
+
+  Export requirements from RedisGears
+
+Options:
+  --host TEXT             Redis host to connect to
+  --port INTEGER          Redis port to connect to
+  --password TEXT         Redis password
+  --save-directory TEXT   Directory for exported files
+  --output-prefix TEXT    Prefix for the requirement zip file
+  --registration-id TEXT  Regisrations ids to extract their requirements
+  --requirement TEXT      Requirement to export
+  --all                   Export all requirements
+  --help                  Show this message and exit.
+
+> gears-cli import-requirements --help
+Usage: __main__.py import-requirements [OPTIONS] [REQUIREMENTS]...
+
+  Import requirements to RedisGears
+
+Options:
+  --host TEXT               Redis host to connect to
+  --port INTEGER            Redis port to connect to
+  --password TEXT           Redis password
+  --requirements-path TEXT  Path of requirements directory containing
+                            requirements zip files, could also be a zip file
+                            contains more requirements zip files
+
+  --bulk-size INTEGER       Max bulk size to send to redis in MB
+  --help                    Show this message and exit.
+
+> gears-cli install-requirements --help
+Usage: __main__.py install-requirements [OPTIONS] [REQUIREMENTS]...
+
+  Install give requirements
+
+Options:
+  --host TEXT               Redis host to connect to
+  --port INTEGER            Redis port to connect to
+  --password TEXT           Redis password
+  --requirements-file TEXT  Path to requirements.txt file
+  --help                    Show this message and exit.
 ```
