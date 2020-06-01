@@ -80,7 +80,7 @@ def install_requirements(host, port, password, requirements_file, requirements):
     requirements = [a for a in requirements]
 
     if requirements_file is not None:
-        with open(requirements, 'r') as f:
+        with open(requirements_file, 'r') as f:
             reqs = [(el.strip()) for el in f.readlines()] 
             requirements += reqs
 
