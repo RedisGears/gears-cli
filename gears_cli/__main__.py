@@ -136,12 +136,10 @@ def decode_utf(d):
     if isinstance(d, bytes):
         return d.decode('utf-8')
     if isinstance(d, dict):
-        return {k.decode('utf-8'): v.decode('utf-8') for k, v in d.items()}
+        return {decode_utf(k): decode_utf(v) for k, v in d.items()}
     if isinstance(d, list):
-        return [x.decode('utf-8') for x in d]
-    if isinstance(d, bytes):
-        return d.decode('utf-8')
-    return d.decode('utf-8') # let it fail
+        return [decode_utf(x) for x in d]
+    return d
 
 def extract_metadata(meta_data_reply):
     meta_data = {}
