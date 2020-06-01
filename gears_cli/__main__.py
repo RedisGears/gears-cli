@@ -77,7 +77,7 @@ def print_res(res, res_id):
 def install_requirements(host, port, password, requirements_file, requirements):
     r = create_connection(host, port, password);
 
-    requirements = [a for a in requirements]
+    requirements = list(requirements)
 
     if requirements_file is not None:
         with open(requirements_file, 'r') as f:
@@ -100,7 +100,7 @@ def install_requirements(host, port, password, requirements_file, requirements):
 def run(host, port, password, requirements, filepath, extra_args):
     r = create_connection(host, port, password);
 
-    extra_args = [a for a in extra_args]
+    extra_args = list(extra_args)
     if requirements is not None:
         extra_args.append('REQUIREMENTS')
         with open(requirements, 'r') as f:
@@ -132,17 +132,22 @@ def run(host, port, password, requirements, filepath, extra_args):
             for i in range(len(errors)):
                 print(Colors.Bred('%d)\t%s' % (i + 1, str(errors[i]))))
 
+def decode_utf(d):
+    if isinstance(key, bytes):
+        return d.decode('utf-8')
+    if isinstance(d, dict):
+        return {k.decode('utf-8'): v.decode('utf-8') for k, v in d.items()}
+    if isinstance(d, list):
+        return [x.decode('utf-8') for x in d]
+    if isinstance(d, bytes):
+        return d.decode('utf-8')
+    return d.decode('utf-8') # let it fail
+
 def extract_metadata(meta_data_reply):
     meta_data = {}
     for i in range(0, len(meta_data_reply), 2):
-        key = meta_data_reply[i]
-        value = meta_data_reply[i + 1]
-        if isinstance(key, bytes):
-            key = key.decode('utf-8')
-        if isinstance(value, bytes):
-            value = value.decode('utf-8')
-        if isinstance(value, list):
-            value = [str(a.decode('utf-8')) for a in value]
+        key = decode_utf(meta_data_reply[i])
+        value = decode_utf(meta_data_reply[i + 1])
         meta_data[key] = value
     return meta_data
 
