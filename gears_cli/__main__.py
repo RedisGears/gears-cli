@@ -133,7 +133,7 @@ def run(host, port, password, requirements, filepath, extra_args):
                 print(Colors.Bred('%d)\t%s' % (i + 1, str(errors[i]))))
 
 def decode_utf(d):
-    if isinstance(key, bytes):
+    if isinstance(d, bytes):
         return d.decode('utf-8')
     if isinstance(d, dict):
         return {k.decode('utf-8'): v.decode('utf-8') for k, v in d.items()}
