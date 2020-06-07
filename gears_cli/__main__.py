@@ -240,12 +240,26 @@ def import_single_req(r, req_io, bulk_size_in_bytes):
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--password', default=None, help='Redis password')
 @click.option('--requirements-path', default='./', help='Path of requirements directory containing requirements zip files, could also be a zip file contains more requirements zip files')
+@click.option('--all', is_flag=True, default=False, help='Import all requirements in zip file')
 @click.option('--bulk-size', default=10, type=int, help='Max bulk size to send to redis in MB')
 @click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
-def import_requirements(host, port, password, requirements_path, bulk_size, requirements):
+def import_requirements(host, port, password, requirements_path, all, bulk_size, requirements):
+    def install_req(req):
+        try:
+            req_data = zf.read(req)
+        except Exception as e:
+            print(Colors.Bred("Requirement %s could not be found in zip, error='%s'" % (req, str(e))))
+            exit(1)
+        io_buffer = io.BytesIO(req_data)
+        import_single_req(r, io_buffer, bulk_size_in_bytes)
+        print(Colors.Green('Requirement %s imported successfully' % req))
+
     r = create_connection(host, port, password, decode_responses=False);
 
     bulk_size_in_bytes = bulk_size * 1024 * 1024
+
+    if len(requirements) == 0 and not all:
+        print(Colors.Bold('Warngin: no requirements specified'))
 
     requirements_path = os.path.abspath(requirements_path)
 
@@ -254,17 +268,20 @@ def import_requirements(host, port, password, requirements_path, bulk_size, requ
         exit(1)
 
     if requirements_path.endswith('.zip'):
+        if len(requirements) == 0:
+            all = True
         with zipfile.ZipFile(requirements_path, "r", zipfile.ZIP_DEFLATED, False) as zf:
-            for req in requirements:
-                try:
-                    req_data = zf.read(req)
-                except Exception as e:
-                    print(Colors.Bred("Requirement %s could not be found in zip, error='%s'" % (req, str(e))))
-                    exit(1)
-                io_buffer = io.BytesIO(req_data)
-                import_single_req(r, io_buffer, bulk_size_in_bytes)
-                print(Colors.Green('Requirement %s imported successfully' % req))
+            if all:
+                for req in zf.namelist():
+                    install_req(req)
+            else:
+                for req in requirements:
+                    install_req(req)
         return
+
+    if not os.path.isdir(requirements_path):
+        print(Colors.Bred("%s is not a directory" % requirements_path))
+        exit(1)
 
     for req in requirements:
         req_path = os.path.join(requirements_path, req)
@@ -273,6 +290,9 @@ def import_requirements(host, port, password, requirements_path, bulk_size, requ
             exit(1)
         import_single_req(r, req_path, bulk_size_in_bytes)
         print(Colors.Green('Requirement %s imported successfully' % req_path))
+
+def main():
+    gears_cli()
 
 if __name__ == '__main__':
     gears_cli()
