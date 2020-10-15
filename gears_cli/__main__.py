@@ -85,7 +85,7 @@ def install_requirements(host, port, password, requirements_file, requirements):
             requirements += reqs
 
     try:
-        reply = r.execute_command('RG.PYEXECUTE', 'log("installing requirements")', 'REQUIREMENTS', *requirements)
+        _ = r.execute_command('RG.PYEXECUTE', 'log("installing requirements")', 'REQUIREMENTS', *requirements)
     except Exception as e:
         print(Colors.Bred("failed running gear function (%s)" % str(e)))
         exit(1)
@@ -144,7 +144,7 @@ def decode_utf(d):
 def extract_metadata(meta_data_reply):
     meta_data = {}
     for i in range(0, len(meta_data_reply), 2):
-        key = decode_utf(meta_data_reply[i])
+        key = meta_data_reply[i].decode('utf-8')
         value = decode_utf(meta_data_reply[i + 1])
         meta_data[key] = value
     return meta_data
@@ -229,7 +229,7 @@ def import_single_req(r, req_io, bulk_size_in_bytes):
             exit(1)
         data = [data[i : i + bulk_size_in_bytes] for i in range(0, len(data), bulk_size_in_bytes)]
         try:
-            res = r.execute_command('RG.PYIMPORTREQ', *data)
+            _ = r.execute_command('RG.PYIMPORTREQ', *data)
         except Exception as e:
             print(Colors.Bred("failed import requirement (%s)" % str(e)))
             exit(1)
