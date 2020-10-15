@@ -20,7 +20,8 @@ pip install git+https://github.com/RedisGears/gears-cli.git
 
 ## Usage
 ```
-Usage: __main__.py [OPTIONS] COMMAND [ARGS]...
+> gears-cli --help
+Usage: gears-cli [OPTIONS] COMMAND [ARGS]...
 
 Options:
   --help  Show this message and exit.
@@ -33,7 +34,7 @@ Commands:
 
 
 > gears-cli run --help
-Usage: __main__.py run [OPTIONS] FILEPATH [EXTRA_ARGS]...
+Usage: gears-cli run [OPTIONS] FILEPATH [EXTRA_ARGS]...
 
   Run gears function
 
@@ -45,7 +46,7 @@ Options:
   --help               Show this message and exit.
 
 > gears-cli export-requirements --help
-Usage: __main__.py export-requirements [OPTIONS]
+Usage: gears-cli export-requirements [OPTIONS]
 
   Export requirements from RedisGears
 
@@ -61,7 +62,7 @@ Options:
   --help                  Show this message and exit.
 
 > gears-cli import-requirements --help
-Usage: __main__.py import-requirements [OPTIONS] [REQUIREMENTS]...
+Usage: gears-cli import-requirements [OPTIONS] [REQUIREMENTS]...
 
   Import requirements to RedisGears
 
@@ -72,12 +73,12 @@ Options:
   --requirements-path TEXT  Path of requirements directory containing
                             requirements zip files, could also be a zip file
                             contains more requirements zip files
-
+  --all                     Import all requirements in zip file
   --bulk-size INTEGER       Max bulk size to send to redis in MB
   --help                    Show this message and exit.
 
 > gears-cli install-requirements --help
-Usage: __main__.py install-requirements [OPTIONS] [REQUIREMENTS]...
+Usage: gears-cli install-requirements [OPTIONS] [REQUIREMENTS]...
 
   Install give requirements
 
