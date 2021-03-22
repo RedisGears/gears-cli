@@ -132,3 +132,6 @@ dmypy.json
 #Eclipse
 .project
 .pydevproject
+
+#Idea
+.idea

@@ -45,10 +45,10 @@ class Colors(object):
 def gears_cli():
     pass
 
-def create_connection(host, port, password, decode_responses=True):
+def create_connection(host, port, ssl, ssl_cert_reqs, password, decode_responses=True):
     global args
     try:
-        r = redis.Redis(host, port, password=password, decode_responses=decode_responses)
+        r = redis.Redis(host, port, password=password, ssl=ssl, ssl_cert_reqs=ssl_cert_reqs, decode_responses=decode_responses)
         r.ping()
     except Exception as e:
         print(Colors.Bred('Cannot connect to Redis. Aborting (%s)' % str(e)))
@@ -71,11 +71,13 @@ def print_res(res, res_id):
 @gears_cli.command(help='Install give requirements')
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
+@click.option('--ssl', default=False, type=bool, help='When True, the connection will be made over ssl')
+@click.option('--ssl_cert_reqs', default=None, help='When set to `None`, ssl certificate validation will be skipped')
 @click.option('--password', default=None, help='Redis password')
 @click.option('--requirements-file', default=None, help='Path to requirements.txt file')
 @click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
 def install_requirements(host, port, password, requirements_file, requirements):
-    r = create_connection(host, port, password);
+    r = create_connection(host, port, ssl, ssl_cert_reqs, password);
 
     requirements = list(requirements)
 
@@ -93,12 +95,14 @@ def install_requirements(host, port, password, requirements_file, requirements):
 @gears_cli.command(help='Run gears function')
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
+@click.option('--ssl', default=False, type=bool, help='When True, the connection will be made over ssl')
+@click.option('--ssl_cert_reqs', default=None, help='When set to `None`, ssl certificate validation will be skipped')
 @click.option('--password', default=None, help='Redis password')
 @click.option('--requirements', default=None, help='Path to requirements.txt file')
 @click.argument('filepath')
 @click.argument('extra_args', nargs=-1, type=click.UNPROCESSED)
-def run(host, port, password, requirements, filepath, extra_args):
-    r = create_connection(host, port, password);
+def run(host, port, ssl, ssl_cert_reqs, password, requirements, filepath, extra_args):
+    r = create_connection(host, port, ssl, ssl_cert_reqs, password);
 
     extra_args = list(extra_args)
     if requirements is not None:
@@ -181,6 +185,8 @@ def export_single_req(r, req_name, save_directory, output_prefix):
 @gears_cli.command(help='Export requirements from RedisGears')
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
+@click.option('--ssl', default=False, type=bool, help='When True, the connection will be made over ssl')
+@click.option('--ssl_cert_reqs', default=None, help='When set to `None`, ssl certificate validation will be skipped')
 @click.option('--password', default=None, help='Redis password')
 @click.option('--save-directory', default='./', help='Directory for exported files')
 @click.option('--output-prefix', default=None, help='Prefix for the requirement zip file')
@@ -188,7 +194,7 @@ def export_single_req(r, req_name, save_directory, output_prefix):
 @click.option('--requirement', multiple=True, default=[], help='Requirement to export')
 @click.option('--all', is_flag=True, default=False, help='Export all requirements')
 def export_requirements(host, port, password, save_directory, output_prefix, registration_id, all, requirement):
-    r = create_connection(host, port, password, decode_responses=False);
+    r = create_connection(host, port, ssl, ssl_cert_reqs, password, decode_responses=False);
 
     if all:
         all_reqs = r.execute_command('RG.PYDUMPREQS')
@@ -238,6 +244,8 @@ def import_single_req(r, req_io, bulk_size_in_bytes):
 @gears_cli.command(help='Import requirements to RedisGears')
 @click.option('--host', default='localhost', help='Redis host to connect to')
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
+@click.option('--ssl', default=False, type=bool, help='When True, the connection will be made over ssl')
+@click.option('--ssl_cert_reqs', default=None, help='When set to `None`, ssl certificate validation will be skipped')
 @click.option('--password', default=None, help='Redis password')
 @click.option('--requirements-path', default='./', help='Path of requirements directory containing requirements zip files, could also be a zip file contains more requirements zip files')
 @click.option('--all', is_flag=True, default=False, help='Import all requirements in zip file')
@@ -254,7 +262,7 @@ def import_requirements(host, port, password, requirements_path, all, bulk_size,
         import_single_req(r, io_buffer, bulk_size_in_bytes)
         print(Colors.Green('Requirement %s imported successfully' % req))
 
-    r = create_connection(host, port, password, decode_responses=False);
+    r = create_connection(host, port, ssl, ssl_cert_reqs, password, decode_responses=False);
 
     bulk_size_in_bytes = bulk_size * 1024 * 1024
 

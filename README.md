@@ -39,11 +39,13 @@ Usage: gears-cli run [OPTIONS] FILEPATH [EXTRA_ARGS]...
   Run gears function
 
 Options:
-  --host TEXT          Redis host to connect to
-  --port INTEGER       Redis port to connect to
-  --password TEXT      Redis password
-  --requirements TEXT  Path to requirements.txt file
-  --help               Show this message and exit.
+  --host TEXT               Redis host to connect to
+  --port INTEGER            Redis port to connect to
+  --ssl BOOL                When True, the connection will be made over ssl
+  --ssl_cert_reqs TEXT      When set to `None`, ssl certificate validation will be skipped
+  --password TEXT           Redis password
+  --requirements TEXT       Path to requirements.txt file
+  --help                    Show this message and exit.
 
 > gears-cli export-requirements --help
 Usage: gears-cli export-requirements [OPTIONS]
@@ -51,15 +53,17 @@ Usage: gears-cli export-requirements [OPTIONS]
   Export requirements from RedisGears
 
 Options:
-  --host TEXT             Redis host to connect to
-  --port INTEGER          Redis port to connect to
-  --password TEXT         Redis password
-  --save-directory TEXT   Directory for exported files
-  --output-prefix TEXT    Prefix for the requirement zip file
-  --registration-id TEXT  Regisrations ids to extract their requirements
-  --requirement TEXT      Requirement to export
-  --all                   Export all requirements
-  --help                  Show this message and exit.
+  --host TEXT               Redis host to connect to
+  --port INTEGER            Redis port to connect to
+  --ssl BOOL                When True, the connection will be made over ssl
+  --ssl_cert_reqs TEXT      When set to `None`, ssl certificate validation will be skipped
+  --password TEXT           Redis password
+  --save-directory TEXT     Directory for exported files
+  --output-prefix TEXT      Prefix for the requirement zip file
+  --registration-id TEXT    Regisrations ids to extract their requirements
+  --requirement TEXT        Requirement to export
+  --all                     Export all requirements
+  --help                    Show this message and exit.
 
 > gears-cli import-requirements --help
 Usage: gears-cli import-requirements [OPTIONS] [REQUIREMENTS]...
@@ -69,6 +73,8 @@ Usage: gears-cli import-requirements [OPTIONS] [REQUIREMENTS]...
 Options:
   --host TEXT               Redis host to connect to
   --port INTEGER            Redis port to connect to
+  --ssl BOOL                When True, the connection will be made over ssl
+  --ssl_cert_reqs TEXT      When set to `None`, ssl certificate validation will be skipped
   --password TEXT           Redis password
   --requirements-path TEXT  Path of requirements directory containing
                             requirements zip files, could also be a zip file
@@ -85,6 +91,8 @@ Usage: gears-cli install-requirements [OPTIONS] [REQUIREMENTS]...
 Options:
   --host TEXT               Redis host to connect to
   --port INTEGER            Redis port to connect to
+  --ssl BOOL                When True, the connection will be made over ssl
+  --ssl_cert_reqs Text      When set to `None`, ssl certificate validation will be skipped
   --password TEXT           Redis password
   --requirements-file TEXT  Path to requirements.txt file
   --help                    Show this message and exit.
