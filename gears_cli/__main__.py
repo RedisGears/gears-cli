@@ -48,7 +48,7 @@ def gears_cli():
 def create_connection(host, port, ssl, no_verify_certs, password, decode_responses=True):
     global args
     ssl_cert_reqs = 'required'
-    if no-verify-certs
+    if no_verify_certs
         ssl_cert_reqs = None
     try:
         r = redis.Redis(host, port, password=password, ssl=ssl, ssl_cert_reqs=ssl_cert_reqs, decode_responses=decode_responses)
