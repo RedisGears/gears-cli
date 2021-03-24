@@ -45,7 +45,7 @@ class Colors(object):
 def gears_cli():
     pass
 
-def create_connection(host, port, ssl, no-verify-certs, password, decode_responses=True):
+def create_connection(host, port, ssl, no_verify_certs, password, decode_responses=True):
     global args
     ssl_cert_reqs = 'required'
     if no-verify-certs
@@ -79,8 +79,8 @@ def print_res(res, res_id):
 @click.option('--password', default=None, help='Redis password')
 @click.option('--requirements-file', default=None, help='Path to requirements.txt file')
 @click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
-def install_requirements(host, port, ssl, no-verify-certs, password, requirements_file, requirements):
-    r = create_connection(host, port, ssl, no-verify-certs, password);
+def install_requirements(host, port, ssl, no_verify_certs, password, requirements_file, requirements):
+    r = create_connection(host, port, ssl, no_verify_certs, password);
 
     requirements = list(requirements)
 
@@ -104,8 +104,8 @@ def install_requirements(host, port, ssl, no-verify-certs, password, requirement
 @click.option('--requirements', default=None, help='Path to requirements.txt file')
 @click.argument('filepath')
 @click.argument('extra_args', nargs=-1, type=click.UNPROCESSED)
-def run(host, port, ssl, no-verify-certs, password, requirements, filepath, extra_args):
-    r = create_connection(host, port, ssl, no-verify-certs, password);
+def run(host, port, ssl, no_verify_certs, password, requirements, filepath, extra_args):
+    r = create_connection(host, port, ssl, no_verify_certs, password);
 
     extra_args = list(extra_args)
     if requirements is not None:
@@ -196,8 +196,8 @@ def export_single_req(r, req_name, save_directory, output_prefix):
 @click.option('--registration-id', multiple=True, default=[], help='Regisrations ids to extract their requirements')
 @click.option('--requirement', multiple=True, default=[], help='Requirement to export')
 @click.option('--all', is_flag=True, default=False, help='Export all requirements')
-def export_requirements(host, port, ssl, no-verify-certs, password, save_directory, output_prefix, registration_id, all, requirement):
-    r = create_connection(host, port, ssl, no-verify-certs, password, decode_responses=False);
+def export_requirements(host, port, ssl, no_verify_certs, password, save_directory, output_prefix, registration_id, all, requirement):
+    r = create_connection(host, port, ssl, no_verify_certs, password, decode_responses=False);
 
     if all:
         all_reqs = r.execute_command('RG.PYDUMPREQS')
@@ -254,7 +254,7 @@ def import_single_req(r, req_io, bulk_size_in_bytes):
 @click.option('--all', is_flag=True, default=False, help='Import all requirements in zip file')
 @click.option('--bulk-size', default=10, type=int, help='Max bulk size to send to redis in MB')
 @click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
-def import_requirements(host, port, ssl, no-verify-certs, password, requirements_path, all, bulk_size, requirements):
+def import_requirements(host, port, ssl, no_verify_certs, password, requirements_path, all, bulk_size, requirements):
     def install_req(req):
         try:
             req_data = zf.read(req)
@@ -265,7 +265,7 @@ def import_requirements(host, port, ssl, no-verify-certs, password, requirements
         import_single_req(r, io_buffer, bulk_size_in_bytes)
         print(Colors.Green('Requirement %s imported successfully' % req))
 
-    r = create_connection(host, port, ssl, no-verify-certs, password, decode_responses=False);
+    r = create_connection(host, port, ssl, no_verify_certs, password, decode_responses=False);
 
     bulk_size_in_bytes = bulk_size * 1024 * 1024
 
