@@ -3,6 +3,7 @@
 [![CircleCI](https://circleci.com/gh/RedisGears/gears-cli/tree/master.svg?style=svg)](https://circleci.com/gh/RedisGears/gears-cli/tree/master)
 [![Releases](https://img.shields.io/github/release/RedisGears/gears-cli.svg)](https://github.com/RedisGears/gears-cli/releases/latest)
 [![Language grade: Python](https://img.shields.io/lgtm/grade/python/g/RedisGears/gears-cli.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/RedisGears/gears-cli/context:python)
+ [![Known Vulnerabilities](https://snyk.io/test/github/RedisGears/gears-cli/badge.svg?targetFile=requirements.txt)](https://snyk.io/test/github/RedisGears/gears-cli?targetFile=requirements.txt) 
 
 # gears-cli
 Simple cli that allows the send python code to RedisGears
