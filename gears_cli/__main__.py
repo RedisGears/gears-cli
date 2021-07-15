@@ -131,6 +131,7 @@ def run(host, port, password, requirements, filepath, extra_args):
             print(Colors.Bred('------'))
             for i in range(len(errors)):
                 print(Colors.Bred('%d)\t%s' % (i + 1, str(errors[i]))))
+            exit(1)
 
 def decode_utf(d):
     if isinstance(d, bytes):
