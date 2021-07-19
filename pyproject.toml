@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "gears-cli"
+version = "1.1.1"
+description = "RedisGears cli"
+authors = ["RedisLabs <oss@redislabs.com>"]
+license = "BSD-3-Clause"
+readme = "README.md"
+
+classifiers = [
+        'Development Status :: 4 - Beta',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: BSD License',
+        'Programming Language :: Python :: 3.7',
+        'Topic :: Database'
+]
+
+[tool.poetry.dependencies]
+python = "^3.7"
+redis = ">=3.5.3"
+click = "^8.0.1"
+
+[tool.poetry.urls]
+url = "https://redisai.io"
+repository = "https://github.com/RedisGears/gears-cli"
+
+[tool.poetry.scripts]
+gears-cli = "gears_cli.__main__:main"
+
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"
