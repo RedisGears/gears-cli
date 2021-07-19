@@ -3,6 +3,8 @@ version: 2.1
 orbs:
   python: circleci/python@0.2.1
 
+commands:
+
 jobs:
   build-and-test:
     executor: python/default
@@ -12,11 +14,11 @@ jobs:
       - python/install-deps
       - python/save-cache
       - run:
+          name: Install poetry
+          command: pip install poetry
+      - run:
           name: Build sdist
-          command: python setup.py sdist  
-#      - run:
-#          command: ./manage.py test
-#          name: Test
+          command: poetry build
 
 workflows:
   main:
