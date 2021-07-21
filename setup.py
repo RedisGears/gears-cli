@@ -4,9 +4,9 @@ import io
 def read_all(f):
     with io.open(f, encoding="utf-8") as I:
         return I.read()
-    
+
 requirements = list(map(str.strip, open("requirements.txt").readlines()))
-    
+
 setup(
     name='gears-cli',
     version='1.1.1',
@@ -17,10 +17,10 @@ setup(
     packages=find_packages(),
     install_requires=requirements,
     classifiers=[
-        'Development Status :: 4 - Beta',
+        'Development Status :: 5 - Production',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: BSD License',
-        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Database'
     ],
     keywords='RedisGears CLI',
