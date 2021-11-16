@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gears-cli"
-version = "1.1.1"
+version = "1.1.2"
 description = "RedisGears cli"
 authors = ["RedisLabs <oss@redislabs.com>"]
 license = "BSD-3-Clause"
@@ -16,7 +16,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-redis = ">=3.5.3"
+redis = "3.5.3"
 click = "^8.0.1"
 
 [tool.poetry.urls]
