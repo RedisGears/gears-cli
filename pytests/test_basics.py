@@ -23,7 +23,8 @@ def requirements_internal_test(env, extra_args=[], after_restart_callback=None):
     # export requirement redis
     result = runner.invoke(export_requirements, extra_args + ['--requirement', 'redis'])
     env.assertEqual(result.exit_code, 0)
-    env.assertContains('Saving exported requirement into', result.output)
+    env.assertContains('Saving exported requirement into ', result.output)
+    exported_file_path = result.output[result.output.find('/') : result.output.find('zip') + 3]
 
     env.stop()
     env.start()
@@ -31,11 +32,11 @@ def requirements_internal_test(env, extra_args=[], after_restart_callback=None):
         after_restart_callback(env)
 
     # import redis requirement
-    result = runner.invoke(import_requirements, extra_args + ['--requirements-path', './', 'redisgears-requirement-v1-redis-linux-focal-x64.zip'])
+    result = runner.invoke(import_requirements, extra_args + ['--requirements-path', os.path.dirname(exported_file_path), os.path.basename(exported_file_path)])
     env.assertEqual(result.exit_code, 0)
     env.assertContains('imported successfully', result.output)
 
-    os.remove('./redisgears-requirement-v1-redis-linux-focal-x64.zip')
+    os.remove(exported_file_path)
 
 def test_run(env):
     run_internal_test(env)
