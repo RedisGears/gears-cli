@@ -90,6 +90,7 @@ def install_requirements(host, port, user, password, requirements_file, requirem
     except Exception as e:
         print(Colors.Bred("failed running gear function (%s)" % str(e)))
         exit(1)
+    print(Colors.Green('Done'))
 
 @gears_cli.command(help='Run gears function')
 @click.option('--host', default='localhost', help='Redis host to connect to')
