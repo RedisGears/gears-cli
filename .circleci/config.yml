@@ -6,7 +6,7 @@ orbs:
 commands:
 
 jobs:
-  build-and-test:
+  build:
     executor: python/default
     steps:
       - checkout
@@ -16,8 +16,28 @@ jobs:
       - run:
           name: Build sdist
           command: poetry build
+  test:
+    docker:
+      - image: redislabs/redisgears:edge
+    steps:
+      - checkout
+
+      - run:
+          name: install tox dependencies
+          command: |
+            /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m pip install --upgrade pip virtualenv
+            /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m pip install -r .circleci/circle_requirements.txt
+      - run:
+          name: build sdist and wheels
+          command: |
+            /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m poetry build
+      - run:
+          name: run tests
+          command:
+            /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m tox -e tests
 
 workflows:
   main:
     jobs:
-      - build-and-test
+      - build
+      - test

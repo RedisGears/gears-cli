@@ -20,7 +20,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.6"
-redis = "3.5.3"
+redis = "^4.1.4"
 click = "^8.0.1"
 
 [tool.poetry.urls]
