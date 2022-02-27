@@ -5,7 +5,7 @@ import os
 
 Defaults.decode_responses = True
 
-SSL_ARGS = ['--ssl-keyfile', './tests/tls/redis.key', '--ssl-certfile', './tests/tls/redis.crt']
+SSL_ARGS = ['--ssl-keyfile', './tests/tls/redis.key', '--ssl-certfile', './tests/tls/redis.crt', '--ssl-password', 'foobar']
 
 def set_acl_user(env):
     env.expect('ACL', 'SETUSER', 'foo', 'on', '>pass', '+@all').ok()
