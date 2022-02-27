@@ -40,16 +40,18 @@ Usage: gears-cli run [OPTIONS] FILEPATH [EXTRA_ARGS]...
   Run gears function
 
 Options:
-  --host TEXT          Redis host to connect to
-  --port INTEGER       Redis port to connect to
-  --user TEXT          Redis acl user
-  --password TEXT      Redis password
-  --ssl-password TEXT  Passphrase for ssl key
-  --ssl-keyfile TEXT   Path to ssl key file
-  --ssl-certfile TEXT  Path to ssl certificate file
-  --ssl-ca-certs TEXT  Path to ssl ca certificate file
-  --requirements TEXT  Path to requirements.txt file
-  --help               Show this message and exit.
+  --host TEXT               Redis host to connect to
+  --port INTEGER            Redis port to connect to
+  --user TEXT               Redis acl user
+  --password TEXT           Redis password
+  --ssl BOOLEAN             Use ssl
+  --ssl-password TEXT       Passphrase for ssl key
+  --ssl-keyfile TEXT        Path to ssl key file
+  --ssl-certfile TEXT       Path to ssl certificate file
+  --ssl-ca-certs TEXT       Path to ssl ca certificate file
+  --ssl-verify-ca BOOLEAN   Whether or not to us CA to verify certs
+  --requirements TEXT       Path to requirements.txt file
+  --help                    Show this message and exit.
 
 > gears-cli export-requirements --help
 Usage: gears-cli export-requirements [OPTIONS]
@@ -61,10 +63,12 @@ Options:
   --port INTEGER          Redis port to connect to
   --user TEXT             Redis acl user
   --password TEXT         Redis password
-  --ssl-password TEXT  Passphrase for ssl key
-  --ssl-keyfile TEXT   Path to ssl key file
-  --ssl-certfile TEXT  Path to ssl certificate file
-  --ssl-ca-certs TEXT  Path to ssl ca certificate file
+  --ssl BOOLEAN           Use ssl
+  --ssl-password TEXT     Passphrase for ssl key
+  --ssl-keyfile TEXT      Path to ssl key file
+  --ssl-certfile TEXT     Path to ssl certificate file
+  --ssl-ca-certs TEXT     Path to ssl ca certificate file
+  --ssl-verify-ca BOOLEAN Whether or not to us CA to verify certs
   --save-directory TEXT   Directory for exported files
   --output-prefix TEXT    Prefix for the requirement zip file
   --registration-id TEXT  Regisrations ids to extract their requirements
@@ -82,10 +86,12 @@ Options:
   --port INTEGER            Redis port to connect to
   --user TEXT               Redis acl user
   --password TEXT           Redis password
-  --ssl-password TEXT  Passphrase for ssl key
-  --ssl-keyfile TEXT   Path to ssl key file
-  --ssl-certfile TEXT  Path to ssl certificate file
-  --ssl-ca-certs TEXT  Path to ssl ca certificate file
+  --ssl BOOLEAN             Use ssl
+  --ssl-password TEXT       Passphrase for ssl key
+  --ssl-keyfile TEXT        Path to ssl key file
+  --ssl-certfile TEXT       Path to ssl certificate file
+  --ssl-ca-certs TEXT       Path to ssl ca certificate file
+  --ssl-verify-ca BOOLEAN   Whether or not to us CA to verify certs
   --requirements-path TEXT  Path of requirements directory containing
                             requirements zip files, could also be a zip file
                             contains more requirements zip files
@@ -103,10 +109,12 @@ Options:
   --port INTEGER            Redis port to connect to
   --user TEXT               Redis acl user
   --password TEXT           Redis password
-  --ssl-password TEXT  Passphrase for ssl key
-  --ssl-keyfile TEXT   Path to ssl key file
-  --ssl-certfile TEXT  Path to ssl certificate file
-  --ssl-ca-certs TEXT  Path to ssl ca certificate file
+  --ssl BOOLEAN             Use ssl
+  --ssl-password TEXT       Passphrase for ssl key
+  --ssl-keyfile TEXT        Path to ssl key file
+  --ssl-certfile TEXT       Path to ssl certificate file
+  --ssl-ca-certs TEXT       Path to ssl ca certificate file
+  --ssl-verify-ca BOOLEAN   Whether or not to us CA to verify certs
   --requirements-file TEXT  Path to requirements.txt file
   --help                    Show this message and exit.
 ```
