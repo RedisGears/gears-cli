@@ -298,7 +298,7 @@ def import_single_req(r, req_io, bulk_size_in_bytes):
 @click.option('--bulk-size', default=10, type=int, help='Max bulk size to send to redis in MB')
 @click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
 def import_requirements(host, port, user, password, 
-                        ssl_password, ssl_keyfile, ssl_certfile, ssl_ca_cert,
+                        ssl_password, ssl_keyfile, ssl_certfile, ssl_ca_certs,
                         requirements_path, all, bulk_size, requirements):
     def install_req(req):
         try:
