@@ -45,10 +45,30 @@ class Colors(object):
 def gears_cli():
     pass
 
-def create_connection(host, port, password, username=None, decode_responses=True):
+def create_connection(host,
+                      port,
+                      password,
+                      username=None,
+                      decode_responses=True,
+                      ssl = False,
+                      ssl_password=None,
+                      ssl_keyfile=None,
+                      ssl_certfile=None,
+                      ssl_verify_ca=True,
+                      ssl_ca_certs=None):
     global args
     try:
-        r = redis.Redis(host=host, port=port, password=password, username=username, decode_responses=decode_responses)
+        r = redis.Redis(host=host,
+                        port=port,
+                        password=password,
+                        username=username,
+                        decode_responses=decode_responses,
+                        ssl=ssl,
+                        ssl_password=ssl_password,
+                        ssl_keyfile=ssl_keyfile,
+                        ssl_certfile=ssl_certfile,
+                        ssl_cert_reqs='required' if ssl_verify_ca else None,
+                        ssl_ca_certs=ssl_ca_certs)
         r.ping()
     except Exception as e:
         print(Colors.Bred('Cannot connect to Redis. Aborting (%s)' % str(e)))
@@ -73,10 +93,20 @@ def print_res(res, res_id):
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--user', default=None, help='Redis acl user')
 @click.option('--password', default=None, help='Redis password')
+@click.option('--ssl', default=False, type=bool, help='Use ssl')
+@click.option('--ssl-password', help='Passphrase for ssl key')
+@click.option('--ssl-keyfile', type=click.Path(), help='Path to ssl key file')
+@click.option('--ssl-certfile', type=click.Path(),help='Path to ssl certificate file')
+@click.option('--ssl-ca-certs', type=click.Path(), help='Path to ssl ca certificate file')
+@click.option('--ssl-verify-ca', default=True, type=bool, help='Whether or not to us CA to verify certs')
 @click.option('--requirements-file', default=None, help='Path to requirements.txt file')
 @click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
-def install_requirements(host, port, user, password, requirements_file, requirements):
-    r = create_connection(host=host, port=port, username=user, password=password)
+def install_requirements(host, port, user, password,
+                         ssl, ssl_password, ssl_keyfile, ssl_certfile, ssl_ca_certs, ssl_verify_ca,
+                         requirements_file, requirements):
+    r = create_connection(host=host, port=port, username=user, password=password,
+                          ssl=ssl, ssl_password=ssl_password, ssl_keyfile=ssl_keyfile, ssl_verify_ca=ssl_verify_ca,
+                          ssl_certfile=ssl_certfile, ssl_ca_certs=ssl_ca_certs)
 
     requirements = list(requirements)
 
@@ -97,11 +127,21 @@ def install_requirements(host, port, user, password, requirements_file, requirem
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--user', default=None, help='Redis acl user')
 @click.option('--password', default=None, help='Redis password')
+@click.option('--ssl', default=False, type=bool, help='Use ssl')
+@click.option('--ssl-password', help='Passphrase for ssl key')
+@click.option('--ssl-keyfile', type=click.Path(), help='Path to ssl key file')
+@click.option('--ssl-certfile', type=click.Path(), help='Path to ssl certificate file')
+@click.option('--ssl-ca-certs', type=click.Path(), help='Path to ssl ca certificate file')
+@click.option('--ssl-verify-ca', default=True, type=bool, help='Whether or not to us CA to verify certs')
 @click.option('--requirements', default=None, help='Path to requirements.txt file')
 @click.argument('filepath')
 @click.argument('extra_args', nargs=-1, type=click.UNPROCESSED)
-def run(host, port, user, password, requirements, filepath, extra_args):
-    r = create_connection(host=host, port=port, username=user, password=password)
+def run(host, port, user, password, requirements, 
+        ssl, ssl_password, ssl_keyfile, ssl_certfile, ssl_ca_certs, ssl_verify_ca,
+        filepath, extra_args):
+    r = create_connection(host=host, port=port, username=user, password=password,
+                          ssl=ssl, ssl_password=ssl_password, ssl_keyfile=ssl_keyfile, ssl_verify_ca=ssl_verify_ca,
+                          ssl_certfile=ssl_certfile, ssl_ca_certs=ssl_ca_certs)
 
     extra_args = list(extra_args)
     if requirements is not None:
@@ -187,13 +227,24 @@ def export_single_req(r, req_name, save_directory, output_prefix):
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--user', default=None, help='Redis acl user')
 @click.option('--password', default=None, help='Redis password')
+@click.option('--ssl', default=False, type=bool, help='Use ssl')
+@click.option('--ssl-password', help='Passphrase for ssl key')
+@click.option('--ssl-keyfile', type=click.Path(), help='Path to ssl key file')
+@click.option('--ssl-certfile', type=click.Path(), help='Path to ssl certificate file')
+@click.option('--ssl-ca-certs', type=click.Path(), help='Path to ssl ca certificate file')
+@click.option('--ssl-verify-ca', default=True, type=bool, help='Whether or not to us CA to verify certs')
 @click.option('--save-directory', default='./', help='Directory for exported files')
 @click.option('--output-prefix', default=None, help='Prefix for the requirement zip file')
 @click.option('--registration-id', multiple=True, default=[], help='Regisrations ids to extract their requirements')
 @click.option('--requirement', multiple=True, default=[], help='Requirement to export')
 @click.option('--all', is_flag=True, default=False, help='Export all requirements')
-def export_requirements(host, port, user, password, save_directory, output_prefix, registration_id, all, requirement):
-    r = create_connection(host=host, port=port, username=user, password=password, decode_responses=False)
+def export_requirements(host, port, user, password, 
+                        ssl, ssl_password, ssl_keyfile, ssl_certfile, ssl_ca_certs, ssl_verify_ca,
+                        save_directory, output_prefix, registration_id, all, requirement):
+    r = create_connection(host=host, port=port, username=user, password=password,
+                          ssl=ssl, ssl_password=ssl_password, ssl_keyfile=ssl_keyfile,
+                          ssl_certfile=ssl_certfile, ssl_ca_certs=ssl_ca_certs, ssl_verify_ca=ssl_verify_ca,
+                          decode_responses=False)
 
     if all:
         all_reqs = r.execute_command('RG.PYDUMPREQS')
@@ -245,11 +296,19 @@ def import_single_req(r, req_io, bulk_size_in_bytes):
 @click.option('--port', default=6379, type=int, help='Redis port to connect to')
 @click.option('--user', default=None, help='Redis acl user')
 @click.option('--password', default=None, help='Redis password')
+@click.option('--ssl', default=False, type=bool, help='Use ssl')
+@click.option('--ssl-password', help='Passphrase for ssl key')
+@click.option('--ssl-keyfile', type=click.Path(), help='Path to ssl key file')
+@click.option('--ssl-certfile', type=click.Path(), help='Path to ssl certificate file')
+@click.option('--ssl-ca-certs', type=click.Path(), help='Path to ssl ca certificate file')
+@click.option('--ssl-verify-ca', default=True, type=bool, help='Whether or not to us CA to verify certs')
 @click.option('--requirements-path', default='./', help='Path of requirements directory containing requirements zip files, could also be a zip file contains more requirements zip files')
 @click.option('--all', is_flag=True, default=False, help='Import all requirements in zip file')
 @click.option('--bulk-size', default=10, type=int, help='Max bulk size to send to redis in MB')
 @click.argument('requirements', nargs=-1, type=click.UNPROCESSED)
-def import_requirements(host, port, user, password, requirements_path, all, bulk_size, requirements):
+def import_requirements(host, port, user, password, 
+                        ssl, ssl_password, ssl_keyfile, ssl_certfile, ssl_ca_certs, ssl_verify_ca,
+                        requirements_path, all, bulk_size, requirements):
     def install_req(req):
         try:
             req_data = zf.read(req)
@@ -260,7 +319,10 @@ def import_requirements(host, port, user, password, requirements_path, all, bulk
         import_single_req(r, io_buffer, bulk_size_in_bytes)
         print(Colors.Green('Requirement %s imported successfully' % req))
 
-    r = create_connection(host=host, port=port, username=user, password=password, decode_responses=False)
+    r = create_connection(host=host, port=port, username=user, password=password,
+                          ssl=ssl, ssl_password=ssl_password, ssl_keyfile=ssl_keyfile,
+                          ssl_certfile=ssl_certfile, ssl_ca_certs=ssl_ca_certs, ssl_verify_ca=ssl_verify_ca,
+                          decode_responses=False)
 
     bulk_size_in_bytes = bulk_size * 1024 * 1024
 
