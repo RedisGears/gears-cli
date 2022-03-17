@@ -176,6 +176,43 @@ def run(host, port, user, password, requirements,
                 print(Colors.Bred('%d)\t%s' % (i + 1, str(errors[i]))))
             exit(1)
 
+@gears_cli.command(help='Run JVM gears function')
+@click.option('--host', default='localhost', help='Redis host to connect to')
+@click.option('--port', default=6379, type=int, help='Redis port to connect to')
+@click.option('--password', default=None, help='Redis password')
+@click.argument('main')
+@click.argument('filepath')
+@click.argument('extra_args', nargs=-1, type=click.UNPROCESSED)
+def run_jvm(host, port, password, main, filepath, extra_args):
+    r = create_connection(host, port, password);
+
+    extra_args = list(extra_args)
+        
+    with open(filepath, 'rb') as f:
+        jar = f.read() 
+    q = ['rg.jexecute', main, jar] + extra_args
+
+    try:
+        reply = r.execute_command(*q)
+    except Exception as e:
+        print(Colors.Bred("failed running gear function (%s)" % str(e)))
+        exit(1)
+    
+    if reply == 'OK':
+        print('OK')
+    else:
+        results, errors = reply
+        print(Colors.Bold('Results'))
+        print(Colors.Bold('-------'))
+        for i in range(len(results)):
+            print_res(results[i], i + 1)
+        print('')
+        if len(errors) > 0:
+            print(Colors.Bred('Errors'))
+            print(Colors.Bred('------'))
+            for i in range(len(errors)):
+                print(Colors.Bred('%d)\t%s' % (i + 1, str(errors[i]))))            
+
 def decode_utf(d):
     if isinstance(d, bytes):
         return d.decode('utf-8')
