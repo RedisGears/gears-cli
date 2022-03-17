@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "gears-cli"
-version = "1.1.2"
+version = "1.1.4"
 description = "RedisGears cli"
 authors = ["RedisLabs <oss@redislabs.com>"]
 license = "BSD-3-Clause"
