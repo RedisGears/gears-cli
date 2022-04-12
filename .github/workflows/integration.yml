@@ -1,0 +1,23 @@
+name: Integration
+on: push
+
+jobs:
+  build_and_test:
+    name: Build and test
+    runs-on: ubuntu-latest
+    container: redislabs/redisgears:edge
+    env:
+      ACTIONS_ALLOW_UNSECURE_COMMANDS: true
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Insall dependencies
+        run: |
+          /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m pip install --upgrade pip virtualenv
+          /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m pip install -r .github/workflow_requirements.txt
+      - name: build sdist and wheels
+        run: |
+          /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m poetry build
+      - name: run tests
+        run: |
+          /var/opt/redislabs/modules/rg/python3_99.99.99/bin/python3 -m tox -e tests
